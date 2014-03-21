@@ -21,8 +21,9 @@
     (re-pattern pat)))
 
 (defn- match? [patterns file]
-  (boolean (first (non-nils (map #(re-find % (str file))
-                                (map ensure-regex  patterns))))))
+  (boolean
+    (first (non-nils (map #(re-find % (str file))
+                          (map ensure-regex patterns))))))
 
 (defn- child? [parent child]
   (not (.isAbsolute (.relativize (.toURI (io/file parent))
@@ -60,12 +61,12 @@
         (string? task) (lein-main/resolve-and-apply
                          project
                          (string/split (string/replace-first task #"%f" (str file)) #"\s+"))
-        (symbol task) (let [ns (separate-ns task)
-                            file-str (.getAbsolutePath file)
-                            form (if ns
-                                   `(do (require '~ns) (~task ~file-str))
-                                   `(~task ~file-str))]
-                        (lein-eval/eval-in-project project form))))))
+        (symbol? task) (let [ns (separate-ns task)
+                             file-str (.getAbsolutePath file)
+                             form (if ns
+                                    `(do (require '~ns) (~task ~file-str))
+                                    `(~task ~file-str))]
+                         (lein-eval/eval-in-project project form))))))
 
 (defn- ensure-slash [dir]
   (if-not (.endsWith dir "/")
@@ -92,20 +93,20 @@
       (println "no watcher found."))))
 
 (comment
-(do
-  (def project
-    {:watch
-     {:watchers
-      {:garden {:watch-dirs ["src-garden"]
-                :file-patterns [#".*"]
-                :tasks ["garden once"]}
-       :hiccup {:watch-dirs ["src-hiccup"]
-                :file-patterns [#"\.txt"]
-                :tasks ["hiccpu once"]}}}})
+  (do
+    (def project
+      {:watch
+       {:watchers
+        {:garden {:watch-dirs ["src-garden"]
+                  :file-patterns [#".*"]
+                  :tasks ["garden once"]}
+         :hiccup {:watch-dirs ["src-hiccup"]
+                  :file-patterns [#"\.txt"]
+                  :tasks ["hiccpu once"]}}}})
 
-  (def router (make-router (-> project :watch :watchers)))
-  (assert (= (router (io/file "src-garden/foo")) :garden))
-  (assert (= (router "src-hiccup/bar") nil))
-  (assert (= (router "src-hiccup/bar.txt") :hiccup))
+    (def router (make-router (-> project :watch :watchers)))
+    (assert (= (router (io/file "src-garden/foo")) :garden))
+    (assert (= (router "src-hiccup/bar") nil))
+    (assert (= (router "src-hiccup/bar.txt") :hiccup))
 
-))
+    ))
