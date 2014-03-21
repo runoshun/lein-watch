@@ -7,7 +7,7 @@ A Leiningen plugin to watch directories and run tasks automatically.
 Put `[lein-watch "0.1.0-SNAPSHOT"]` into the `:plugins` vector of your project.clj and
 add :watch configuration to your project.clj.
 
-Example configuration (run compile task when .clj files changes) :
+Example configuration (run compile task when .clj file is changed) :
 
     (defproject sample-project
       ...
