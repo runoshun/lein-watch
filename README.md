@@ -24,7 +24,7 @@ and just run watch task
 
     $ lein watch
 
-See [sample-project](http://github.com/runoshun/lein-watch/sample-project) for more complex usage.
+See [sample-project](https://github.com/runoshun/lein-watch/tree/master/sample-project) for more complex usage.
 
 ## License
 
