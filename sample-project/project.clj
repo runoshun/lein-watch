@@ -26,7 +26,7 @@
 
     ;; watcher definition
     :watchers {
-      ;; run 'lein garden once' when *.clj file under the 'src-garden' changed.
+      ;; run 'lein garden once' when *.clj file under the 'src-garden' is changed.
       :garden {;; :watch-dirs (required) : vector of string
                ;;   Put directories that you want watch.
                :watch-dirs ["src-garden"]
@@ -38,7 +38,7 @@
                :file-patterns [#"\.clj"]
 
                ;; :tasks (required) : vector of (string|symbol)
-               ;;   Put tasks that you want executed when file changed.
+               ;;   Put tasks that you want executed when file is changed.
                ;;   If a value is string, it is evaluated as a leiningen task.
                ;;   If a value is symbol, it is called as a function in project context and
                ;;   is passed changed file as argument.
@@ -48,8 +48,9 @@
                ;;   profile names used when executing tasks.
                ;;   default : []
                :profiles [:garden]}
+
       ;; call 'test-watch.hiccup/generate' (defined in 'src-hiccup/test_watch/hiccup.clj')
-      ;; when *.clj file under the 'src-hiccup' changed.
+      ;; when *.clj file under the 'src-hiccup' is changed.
       :hiccup {:watch-dirs ["src-hiccup"]
                :profiles [:hiccup]
                :file-patterns [#"\.clj"]
