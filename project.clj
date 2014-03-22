@@ -1,4 +1,4 @@
-(defproject lein-watch "0.0.1"
+(defproject lein-watch "0.0.2-SNAPSHOT"
   :description "A Leiningen plugin to watch directories and run tasks automatically."
   :url "http://github.com/runoshun/lein-watch"
   :license {:name "MIT"

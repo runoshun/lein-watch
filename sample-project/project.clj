@@ -37,11 +37,13 @@
                ;;   default : [#".*"].
                :file-patterns [#"\.clj"]
 
-               ;; :tasks (required) : vector of (string|symbol)
+               ;; :tasks (required) : vector of (string|symbol|list)
                ;;   Put tasks that you want executed when file is changed.
                ;;   If a value is string, it is evaluated as a leiningen task.
                ;;   If a value is symbol, it is called as a function in project context and
                ;;   is passed changed file as argument.
+               ;;   If a value is list, it is evaluated in project context and changed file is
+               ;;    appended last of argument.
                :tasks ["garden once"]
 
                ;; profiles (optional) : vector of keyword
@@ -54,5 +56,5 @@
       :hiccup {:watch-dirs ["src-hiccup"]
                :profiles [:hiccup]
                :file-patterns [#"\.clj"]
-               :tasks [test-watch.hiccup/generate]}}})
+               :tasks [(test-watch.hiccup/generate "resources/public/index.html")]}}})
 

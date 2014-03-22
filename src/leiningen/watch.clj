@@ -53,6 +53,7 @@
 
 (defn- run-tasks [project watcher file]
   (let [project (lein-project/merge-profiles project (:profiles watcher))
+        file-str (.getAbsolutePath file)
         tasks (:tasks watcher)]
     (println (str "[lein-watch] file changed : " file))
     (println (str "[lein-watch] run-tasks : " tasks))
@@ -60,13 +61,18 @@
       (cond
         (string? task) (lein-main/resolve-and-apply
                          project
-                         (string/split (string/replace-first task #"%f" (str file)) #"\s+"))
+                         (string/split (string/replace-first task #"%f" file-str) #"\s+"))
         (symbol? task) (let [ns (separate-ns task)
-                             file-str (.getAbsolutePath file)
                              form (if ns
                                     `(do (require '~ns) (~task ~file-str))
                                     `(~task ~file-str))]
+                         (lein-eval/eval-in-project project form))
+        (list? task)   (let [ns (separate-ns (first task))
+                             form (if ns
+                                    `(do (require '~ns) (~@task ~file-str))
+                                    `(~@task ~file-str))]
                          (lein-eval/eval-in-project project form))))))
+
 
 (defn- ensure-slash [dir]
   (if-not (.endsWith dir "/")
