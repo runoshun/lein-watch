@@ -89,8 +89,12 @@
         router (make-router watchers)
         dirs (map ensure-slash (mapcat :watch-dirs (vals watchers)))
         process-event (fn [files]
-                        (doseq [file files]
-                          (run-tasks project (watchers (router file)) file)))]
+                        (try
+                          (doseq [file files]
+                            (run-tasks project (watchers (router file)) file))
+                          (catch Throwable e
+                            (println (.getMessage e))
+                            (.printStackTrace e))))]
     (if watchers
       (deref
         (wt/watcher dirs
