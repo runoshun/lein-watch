@@ -22,8 +22,8 @@
 
 (defn- match? [patterns file]
   (boolean
-    (first (non-nils (map #(re-find % (str file))
-                          (map ensure-regex patterns))))))
+    (some identity (map #(re-find % (str file))
+                        (map ensure-regex patterns)))))
 
 (defn- child? [parent child]
   (not (.isAbsolute (.relativize (.toURI (io/file parent))
@@ -51,26 +51,24 @@
       (symbol (first syms))
       nil)))
 
-(defn- run-tasks [project watcher file]
+(defn- run-tasks [project watcher]
   (let [project (lein-project/merge-profiles project (:profiles watcher))
-        file-str (.getAbsolutePath file)
         tasks (:tasks watcher)]
-    (println (str "[lein-watch] file changed : " file))
     (println (str "[lein-watch] run-tasks : " tasks))
     (doseq [task tasks]
       (cond
         (string? task) (lein-main/resolve-and-apply
                          project
-                         (string/split (string/replace-first task #"%f" file-str) #"\s+"))
+                         (string/split task #"\s+"))
         (symbol? task) (let [ns (separate-ns task)
                              form (if ns
-                                    `(do (require '~ns) (~task ~file-str))
-                                    `(~task ~file-str))]
+                                    `(do (require '~ns) (~task))
+                                    `(~task))]
                          (lein-eval/eval-in-project project form))
         (list? task)   (let [ns (separate-ns (first task))
                              form (if ns
-                                    `(do (require '~ns) (~@task ~file-str))
-                                    `(~@task ~file-str))]
+                                    `(do (require '~ns) (~@task))
+                                    `(~@task))]
                          (lein-eval/eval-in-project project form))))))
 
 
@@ -90,8 +88,13 @@
         dirs (map ensure-slash (mapcat :watch-dirs (vals watchers)))
         process-event (fn [files]
                         (try
-                          (doseq [file files]
-                            (run-tasks project (watchers (router file)) file))
+                          (let [files-with-routes (map (fn [file] [(router file) file]) files)
+                                route-map (reduce #(update-in %1 [(first %2)] conj (second %2)) {} files-with-routes)]
+                            (doseq [route (keys route-map)]
+                              (when route
+                                (let [files (get route-map route)]
+                                  (println (str "[lein-watch] file(s) changed : " (mapv str files)))
+                                  (run-tasks project (watchers route))))))
                           (catch Throwable e
                             (println (.getMessage e))
                             (.printStackTrace e))))]
