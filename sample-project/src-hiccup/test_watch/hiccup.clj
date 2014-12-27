@@ -1,7 +1,7 @@
 (ns test-watch.hiccup
   (:require [hiccup.core :refer [html]]))
 
-(defn generate [dest _]
+(defn generate [dest]
   (spit dest
         (html [:html
                [:head [:link {:rel "stylesheet" :type "text/css" :href "screen.css"}]]

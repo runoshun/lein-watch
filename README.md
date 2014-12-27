@@ -12,7 +12,7 @@ Example configuration (run compile task when .clj file is changed) :
     (defproject sample-project
       ...
       :watch {
-        :rate 500 ;; check file every 500ms (use 'watchtower' intanally)
+        :rate 500 ;; check file every 500ms ('watchtower' is used internally)
         :watchers {
           :compile {
             :watch-dirs ["src"]

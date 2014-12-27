@@ -3,7 +3,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
 
   ;; use 'lein-watch' plugin
-  :plugins [[lein-watch "0.0.1"]
+  :plugins [[lein-watch "0.0.3"]
             [lein-garden "0.1.8"]]
   :dependencies [[org.clojure/clojure "1.5.1"]]
 
