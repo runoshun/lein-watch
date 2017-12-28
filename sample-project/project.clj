@@ -21,8 +21,8 @@
 
   ;; configuration for 'lein-watch'
   :watch {
-    ;; polling rate in 'ms' (it's directory passed to 'watchtower')
     :rate 300
+    :color :blue
 
     ;; watcher definition
     :watchers {
